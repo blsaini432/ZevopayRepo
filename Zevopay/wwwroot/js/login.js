@@ -17,7 +17,7 @@
                  window.location.href = "/Home/Index";
             },
             error: function (error) {
-
+                toastr.error('Login Failed!');
             }
         });
     })
