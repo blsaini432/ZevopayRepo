@@ -1,0 +1,41 @@
+﻿@model Zevopay.Models.SubAdminDto
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model?.SubAdminData?.Count > 0)
+        {
+            @foreach (var item in Model.SubAdminData)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.PhoneNumber</td>
+                    <td>
+                        @if (!item.LockoutEnabled)
+                        {
+                            <input type="button" data-SubadminId="@item.Id" class="btn btn-sm btn-primary updateStatus" value="Active"/>
+                        }
+                        else
+                        {
+                            <input type="button" data-SubadminId="@item.Id" class="btn btn-sm btn-primary updateStatus" value="DeActive" />
+                        }
+                    </td>
+
+                    <td>
+                        <a class="btn btn-secondary btn-rounded btn-fw editSubAdmin" asp-controller="Account" asp-action="SubAdmin" asp-route-id="@item.Id">Edit</a>
+                    </td>
+                </tr>
+
+            }
+
+        }
+    </tbody>
+</table>
