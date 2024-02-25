@@ -21,11 +21,11 @@
                     <td>
                         @if (!item.LockoutEnabled)
                         {
-                            <input type="button" data-SubadminId="@item.Id" class="btn btn-sm btn-primary updateStatus" value="Active"/>
+                            <input type="button" data-SubadminId="@item.Id" class="btn btn-primary btn-rounded btn-fw updateStatus" value="Active" />
                         }
                         else
                         {
-                            <input type="button" data-SubadminId="@item.Id" class="btn btn-sm btn-primary updateStatus" value="DeActive" />
+                            <input type="button" data-SubadminId="@item.Id" class="btn btn-primary btn-rounded btn-fw updateStatus" value="DeActive" />
                         }
                     </td>
 
@@ -35,7 +35,6 @@
                 </tr>
 
             }
-
         }
     </tbody>
 </table>

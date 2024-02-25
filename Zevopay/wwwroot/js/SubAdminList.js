@@ -19,7 +19,13 @@
             type: "get",
             data: formData,
             success: function (d) {
-                fillData();
+                if (d.resultFlag == 1) {
+                    toastr.success(d.message);
+                    fillData();
+                } else {
+                    toastr.error('Failed to update status!');
+                }
+
             },
             error: function (error) {
                 //toastr.error('Failed to get subadminList!');
@@ -28,7 +34,7 @@
 
     });
 });
-   
+
 function fillData() {
     $.ajax({
         url: "/Account/SubAdminListPrtial",

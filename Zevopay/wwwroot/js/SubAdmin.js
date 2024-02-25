@@ -49,7 +49,7 @@
                     if (d.message != '') {
 
                         if (d.resultFlag == 1) {
-                            toastr.info(d.message);
+                            toastr.success(d.message);
                             window.location.href = "/Account/SubAdminList";
                         } else {
 
