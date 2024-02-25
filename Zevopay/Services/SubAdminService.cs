@@ -54,15 +54,17 @@ namespace Zevopay.Services
                     {
                         await _userManager.SetLockoutEnabledAsync(user, status);
                         result = await _userManager.SetLockoutEndDateAsync(user, DateTime.Today.AddYears(100));
-                        model.Message = "Deactive";
+                        model.Message = "Account Deactivated Successfully!";
                     }
                     else
                     {
                         result = await _userManager.SetLockoutEnabledAsync(user, status);
-                        model.Message = "Active";
+                        model.Message = "Account Activated Successfully!";
                     }
 
+                    model.Data = result.Errors.ToList();
                     model.ResultFlag = result.Succeeded ? 1 : 0;
+                    model.Message = result.Succeeded ? model.Message : string.Empty;
                 }
             }
             return model;

@@ -29,6 +29,8 @@ namespace Zevopay.Controllers.MVC
         [AllowAnonymous]
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Index","Home");
             return View(new LoginModel());
         }
 
@@ -211,7 +213,7 @@ namespace Zevopay.Controllers.MVC
                         Address = model.Address,
                         Role = applicationRole?.Name,
                         CreateDate = model.CreateDate,
-                        MemberId = $"RT{RendamNumber()}"
+                        MemberId = $"RT{RendamNumber(6)}"
                     };
                     var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
@@ -299,10 +301,10 @@ namespace Zevopay.Controllers.MVC
 
         #endregion
 
-        private string RendamNumber()
+        private string RendamNumber(int digit)
         {
             Random generator = new Random();
-            return generator.Next(0, 1000000).ToString("D6");
+            return generator.Next(0, 1000000).ToString($"D{digit}");
         }
 
         #region Forgot/Reset Password

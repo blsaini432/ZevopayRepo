@@ -31,7 +31,7 @@ namespace Zevopay.Services
 
             if (result.Succeeded)
             {
-                response = new ResponseModel { ResultFlag = 1, Message = "success" };
+                response = new ResponseModel { ResultFlag = 1, Message = "success!" };
             }
             else if (result.IsLockedOut)
             {
@@ -39,7 +39,7 @@ namespace Zevopay.Services
             }
             else
             {
-                response = new ResponseModel { ResultFlag = 0, Message = "Invalid login attempt" };
+                response = new ResponseModel { ResultFlag = 0, Message = "Invalid login attempt!" };
             }
             return response;
         }
