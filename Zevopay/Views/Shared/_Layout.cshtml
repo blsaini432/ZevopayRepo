@@ -234,15 +234,16 @@
                                 <span class="menu-title">Dashboard</span>
                             </a>
                         </li>
-                        @if(User.IsInRole($"{RolesConstants.AdminRole}")){
+                        @if (User.IsInRole($"{RolesConstants.AdminRole}"))
+                        {
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="SubAdminList">
-                                <i class="typcn typcn-document-text menu-icon"></i>
-                                <span class="menu-title">Sub Admin</span>
-                            </a>
-                           
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="SubAdminList">
+                                    <i class="typcn typcn-document-text menu-icon"></i>
+                                    <span class="menu-title">Sub Admin</span>
+                                </a>
+
+                            </li>
                         }
 
                         <li class="nav-item">
@@ -259,7 +260,7 @@
                                 <span class="menu-title">Wallet Transactions</span>
                             </a>
 
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Admin" asp-action="SurchargeList">
                                 <i class="typcn typcn-document-text menu-icon"></i>
@@ -322,15 +323,6 @@
     <!-- Custom js for this page-->
     <script src="~/js/dashboard.js"></script>
     <!-- End custom js for this page-->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
-    <script src="~/js/login.js"></script>
-    <script src="~/js/subadminlist.js"></script>
-    <script src="~/js/subadmin.js"></script>
-    <script src="~/js/viewsscripts/fundmanage.js"></script>
-    <script src="~/js/viewsscripts/wallettransactions.js"></script>
-    <script src="~/js/viewsscripts/surchargelist.js"></script>
-    <script src="~/js/viewsscripts/surcharge.js"></script>
 </body>
 
 </html>

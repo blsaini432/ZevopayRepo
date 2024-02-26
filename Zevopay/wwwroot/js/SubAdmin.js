@@ -58,7 +58,7 @@
                     }
                 },
                 error: function (error) {
-                    //toastr.error('Error while adding subAdmin');
+                    toastr.error('Error while adding subAdmin');
                 }
             });
         }

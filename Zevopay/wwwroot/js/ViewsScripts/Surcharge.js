@@ -46,7 +46,7 @@ $(document).ready(function () {
                     toastr.error(result.message);
                 },
                 error: function (error) {
-                    //toastr.error("error");
+                    toastr.error("error");
                 }
             });
         }

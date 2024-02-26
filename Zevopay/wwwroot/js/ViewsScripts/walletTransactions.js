@@ -8,10 +8,9 @@ function fillTransactionData() {
         success: function (d) {
             $('#Transaction-Div').html('');
             $('#Transaction-Div').html(d);
-            //toastr.info(d.message);
         },
         error: function (error) {
-            //toastr.error('Failed to get subadminList!');
+            toastr.error('Failed to get subadminList!');
         }
     });
 }
