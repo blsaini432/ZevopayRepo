@@ -28,7 +28,7 @@
 
             },
             error: function (error) {
-                //toastr.error('Failed to get subadminList!');
+                toastr.error('Failed to get subadminList!');
             }
         });
 
