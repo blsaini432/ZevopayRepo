@@ -16,6 +16,7 @@ namespace Zevopay.App_Start
             builder.Services.AddScoped<IDapperDbContext, DapperDbContext>();
             services.AddScoped<IAccountService,AccountService>();
             services.AddScoped<ISubAdminService,SubAdminService>();
+            services.AddScoped<IAdminService,AdminService>();
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
              .AddEntityFrameworkStores<DataContext>()
