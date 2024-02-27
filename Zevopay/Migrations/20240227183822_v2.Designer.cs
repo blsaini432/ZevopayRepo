@@ -12,7 +12,7 @@ using Zevopay.Data;
 namespace Zevopay.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240219171839_v2")]
+    [Migration("20240227183822_v2")]
     partial class v2
     {
         /// <inheritdoc />
@@ -195,7 +195,6 @@ namespace Zevopay.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -206,6 +205,9 @@ namespace Zevopay.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("MemberId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
