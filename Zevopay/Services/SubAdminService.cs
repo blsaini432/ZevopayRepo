@@ -25,19 +25,28 @@ namespace Zevopay.Services
 
         public async Task<SubAdminDto> GetSubAdminList(SubAdminDto model)
         {
-            var response = await SqlMapper.QueryMultipleAsync(new SqlConnection(ConnectionString),
-           "SP_SubAdmin", new
-           {
-               Action = 1,
-               //model.PageNumber,
-               //model.PageSize,
-               //model.SearchText,
-           }, commandType: CommandType.StoredProcedure);
+            try
+            {
 
-            model.SubAdminData = response.Read<SubAdminModel>().ToList();
-            var totalRecord = response.Read<TotalRecords>().ToList();
-            model.TotalRecord = totalRecord.FirstOrDefault().TotalRecord;
-            return model;
+                var response = await SqlMapper.QueryMultipleAsync(new SqlConnection(ConnectionString),
+               "SP_SubAdmin", new
+               {
+                   Action = 1,
+                   //model.PageNumber,
+                   //model.PageSize,
+                   //model.SearchText,
+               }, commandType: CommandType.StoredProcedure);
+
+                model.SubAdminData = response.Read<SubAdminModel>().ToList();
+                var totalRecord = response.Read<TotalRecords>().ToList();
+                model.TotalRecord = totalRecord.FirstOrDefault().TotalRecord;
+                return model;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
 
         }
 

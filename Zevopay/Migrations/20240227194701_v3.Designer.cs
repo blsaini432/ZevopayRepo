@@ -12,7 +12,7 @@ using Zevopay.Data;
 namespace Zevopay.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240219181109_v3")]
+    [Migration("20240227194701_v3")]
     partial class v3
     {
         /// <inheritdoc />
@@ -207,7 +207,6 @@ namespace Zevopay.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("MemberId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -242,6 +241,12 @@ namespace Zevopay.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("ZeoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZeoId"));
 
                     b.HasKey("Id");
 
