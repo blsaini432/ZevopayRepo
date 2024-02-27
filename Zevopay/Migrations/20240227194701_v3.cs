@@ -10,18 +10,20 @@ namespace Zevopay.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "MemberId",
+            migrationBuilder.AddColumn<int>(
+                name: "ZeoId",
                 table: "AspNetUsers",
-                type: "nvarchar(max)",
-                nullable: true);
+                type: "int",
+                nullable: false,
+                defaultValue: 0)
+                .Annotation("SqlServer:Identity", "100, 1");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "MemberId",
+                name: "ZeoId",
                 table: "AspNetUsers");
         }
     }
