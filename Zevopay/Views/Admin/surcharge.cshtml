@@ -12,9 +12,27 @@
 
 
 <div class="form-sample">
-    <p class="card-description">
-        Surcharge Form
-    </p>
+    <h5 class="card-description">
+        Surcharge
+    </h5>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">RangeFrom</label>
+                <div class="col-sm-9">
+                    <input type="number" class="form-control" id="RangeFrom" min="0" step="0.01" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">RangeTo</label>
+                <div class="col-sm-9">
+                    <input type="number" class="form-control" id="RangeTo" min="0" step="0.01" />
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
@@ -38,34 +56,35 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label">RangeFrom</label>
+                <label class="col-sm-3 col-form-label"></label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" id="RangeFrom" min="0" step="0.01" />
+
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input">
+                        Flat
+                        <i class="input-helper"></i>
+                    </label>
+                      
+                    
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label">RangeTo</label>
+                <label class="col-sm-3 col-form-label"></label>
                 <div class="col-sm-9">
-                    <input type="number" class="form-control" id="RangeTo" min="0" step="0.01" />
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="">
+                        Default
+                        <i class="input-helper"></i>
+                    </label>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label toggle-switch toggle-switch-info">
-                    <input type="checkbox" id="">
-                    <span class="toggle-slider round"></span>
-                </label>
             </div>
         </div>
     </div>
 
     <input type="button" class="btn btn-primary btn-rounded btn-fw" id="Surcharge_Submit_btn" value="Submit" />
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script> 
 <script src="~/js/viewsscripts/surcharge.js"></script>

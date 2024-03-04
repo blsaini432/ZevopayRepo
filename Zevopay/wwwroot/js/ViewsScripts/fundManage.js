@@ -3,12 +3,12 @@ $(document).ready(function () {
 
     $("#fundManage_btn").on("click", function (e) {
 
-        var memberId = $("#memberId").val();
+        var memberId = $("#memberId").val().split(",");
         var factor = $("#factor").val();
         var amount = $("#amount").val().trim();
         var description = $("#description").val();
         var formData = {
-            MemberId: memberId,
+            MemberId: memberId[0],
             Factor: factor,
             Amount: amount,
             Description: description
@@ -34,9 +34,13 @@ $(document).ready(function () {
                 success: function (result) {
                     if (result.resultFlag == 1) {
                         toastr.success(result.message);
-                        window.location.href = "/Home/Index";
+                        setTimeout(pagrChange,1000)
+                      
                     }
-                    toastr.error(result.message);
+                    else {
+                        toastr.error(result.message);
+                    }
+                  
                 },
                 error: function (error) {
                     toastr.error("error");
@@ -44,4 +48,25 @@ $(document).ready(function () {
             });
         }
     })
+
+    pagrChange = function () {
+        window.location.href = "/Admin/AdminCreditDebitTransactions";
+    };
+
+
+    $(".selectMember").change(function () {
+        // Your code to execute when the selection changes
+        var zevoId = $("#memberId").val().split(",");
+        $.ajax({
+            url: "/Admin/GetBalanceByUser",
+            type: "post",
+            data: { zevoId: zevoId[1] },
+            success: function (result) {
+                    $("#balance").text("Wallet Balance: " + result.balance);                     
+            },
+            error: function (error) {
+                toastr.error("error");
+            }
+        });
+    });
 })

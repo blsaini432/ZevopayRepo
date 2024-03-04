@@ -22,11 +22,14 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="~/images/favicon.png" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+
 </head>
 <body>
-
+    <div id="loader" class="loader-container">
+        <img src="~/images/loader.gif" alt="Loading..." class="loader" />
+    </div>
     @{
-        var role= User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+        var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
     }
     @if (User.Identity.IsAuthenticated)
     {
@@ -257,12 +260,31 @@
                         }
 
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Admin" asp-action="FundForm">
-                                <i class="typcn typcn-document-text menu-icon"></i>
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+                                <i class="typcn typcn-film menu-icon"></i>
                                 <span class="menu-title">Fund Manage</span>
+                                <i class="menu-arrow"></i>
                             </a>
+                            <div class="collapse" id="form-elements" style="">
+                                <ul class="nav flex-column sub-menu">                        
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Admin" asp-action="FundForm">
+                                           
+                                            <span class="menu-title">Fund Manage</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Admin" asp-action="AdminCreditDebitTransactions">
+                                      
+                                            <span class="menu-title">Credit Debit Report</span>
+                                        </a>
 
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
+
+                       
 
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Admin" asp-action="WalletTransactions">
@@ -332,6 +354,8 @@
     <!-- endinject -->
     <!-- Custom js for this page-->
     <script src="~/js/dashboard.js"></script>
+
+    <script src="~/js/viewsscripts/global.js"></script>
     <!-- End custom js for this page-->
 </body>
 

@@ -41,9 +41,13 @@ $(document).ready(function () {
                 success: function (result) {
                     if (result.resultFlag == 1) {
                         toastr.success(result.message);
-                        window.location.href = "/Admin/SurchargeList";
+                        setTimeout(pagrChange, 1000)
+
                     }
-                    toastr.error(result.message);
+                    else {
+                        toastr.error(result.message);
+                    }
+
                 },
                 error: function (error) {
                     toastr.error("error");
@@ -51,4 +55,10 @@ $(document).ready(function () {
             });
         }
     })
+
+
+
+    pagrChange = function () {
+        window.location.href = "/Admin/SurchargeList";
+    };
 })

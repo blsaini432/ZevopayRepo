@@ -19,6 +19,27 @@ namespace Zevopay.Controllers.MVC
             _adminService = adminService;
         }
 
+
+
+
+
+        #region Credit Debit Transaction
+        public IActionResult AdminCreditDebitTransactions()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> AdminCreditDebitTransactionsPartial()
+        {
+            return PartialView(await _adminService.GetCeditDebitTransactions());
+
+        }
+        #endregion Credit Debit Transaction
+
+
+
+
+
         #region FundManage
         public async Task<IActionResult> FundForm(FundManageModel model)
         {
@@ -26,8 +47,8 @@ namespace Zevopay.Controllers.MVC
             {
                 model.Users = await _userManager.Users.Where(u => u.Role != RolesConstants.AdminRole).Select(x => new SelectListItem()
                 {
-                    Text = $"{x.FirstName} {x.LastName}",
-                    Value = x.MemberId
+                    Text = $"{x.MemberId}  {x.FirstName} {x.LastName}",
+                    Value = $"{x.MemberId},{x.Id}",
                 }).ToListAsync();
             }
             catch (Exception)
@@ -54,6 +75,22 @@ namespace Zevopay.Controllers.MVC
             }
             return new JsonResult(response);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetBalanceByUser(string zevoId)
+        {
+            WalletTransactions response = new();
+            try
+            {
+                response = await _adminService.GetBalanceByUser(zevoId);
+            }
+            catch (Exception ex)
+            {
+            }
+            return new JsonResult(response);
+        }
+
         #endregion FundManage End
 
         #region WalletTransaction

@@ -2,12 +2,12 @@
 <table class="table">
     <thead>
         <tr>
-            <th>MemebrId / Member Name</th>
+            <th>MemberId / MemberName </th>
             <th>Amount</th>
             <th>Balance</th>
             <th>Factor</th>
             <th>Description</th>
-            <th>Action</th>
+            <th>Date</th>
         </tr>
     </thead>
     <tbody>
@@ -21,9 +21,7 @@
                     <td>@item.Balance</td>
                     <td>@item.Factor</td>
                     <td>@item.Description </td>
-                    <td>
-                        <a class="btn btn-secondary btn-rounded btn-fw editSubAdmin" asp-controller="Admin" asp-action="#" >Edit</a>
-                    </td>
+                    <td> @item.AddDate </td>
                 </tr>
 
             }

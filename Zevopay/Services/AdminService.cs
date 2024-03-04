@@ -45,7 +45,7 @@ namespace Zevopay.Services
         #region GetWalletTransactions
         public async Task<IEnumerable<WalletTransactions>> GetWalletTransactionsAsync()
         {
-            return await SqlMapper.QueryAsync<WalletTransactions>(new SqlConnection(_connectionString), AdminFundCreditDebit_SP,
+            return await SqlMapper.QueryAsync<WalletTransactions>(new SqlConnection(_connectionString), "SP_CreditDebitTransaction",
             new
             {
                 Action = 2,
@@ -54,6 +54,19 @@ namespace Zevopay.Services
 
         }
         #endregion GetWalletTransactions End
+
+
+
+        public async Task<IEnumerable<WalletTransactions>> GetCeditDebitTransactions()
+        {
+         var data = await SqlMapper.QueryAsync<WalletTransactions>(new SqlConnection(_connectionString), "SP_CreditDebitTransaction",
+         new
+         {
+             Action = 1,
+         }, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+
 
         #region SurchargeList
         public async Task<IEnumerable<Surcharge>> GetSurchagesAsync()
@@ -71,13 +84,22 @@ namespace Zevopay.Services
                new
                {
                    Action = 2,
-                   TransactionType=model.TransactionType,
-                   RangeFrom=model.RangeFrom,
-                   RangeTo=model.RangeTo,
-                   IsFlat=model.IsFlat,
-                   SurchargeAmount=model.SurchargeAmount
+                   TransactionType = model.TransactionType,
+                   RangeFrom = model.RangeFrom,
+                   RangeTo = model.RangeTo,
+                   IsFlat = model.IsFlat,
+                   SurchargeAmount = model.SurchargeAmount
                }, commandType: CommandType.StoredProcedure);
         }
         #endregion SurchargeList End
+
+
+
+        public async Task<WalletTransactions> GetBalanceByUser(string zevoId)
+        {
+            var query = $"select Balance  from WalletBalance where Id={zevoId}";
+            var data = await _dapperDbContext.QueryFirstOrDefaultAsync<WalletTransactions>(query);
+            return data;
+        }
     }
 }

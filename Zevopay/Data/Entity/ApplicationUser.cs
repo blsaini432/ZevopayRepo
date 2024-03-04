@@ -6,8 +6,8 @@ namespace Zevopay.Data.Entity
 {
     public class ApplicationUser :IdentityUser
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ZeoId { get; set; }
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public int ZeoId { get; set; }
         public string? MemberId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

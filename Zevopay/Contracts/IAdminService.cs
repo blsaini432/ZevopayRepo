@@ -10,5 +10,8 @@ namespace Zevopay.Contracts
         Task<IEnumerable<Surcharge>> GetSurchagesAsync();
         Task<ResponseModel> AddSurchargeAsync(Surcharge model);
 
+        Task<IEnumerable<WalletTransactions>> GetCeditDebitTransactions();
+
+        Task<WalletTransactions> GetBalanceByUser(string  zevoId);
     }
 }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Zevopay.Contracts;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
+using Zevopay.Services;
 
 
 namespace Zevopay.Controllers.MVC
@@ -16,13 +18,17 @@ namespace Zevopay.Controllers.MVC
         private readonly IAccountService _accountService;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ISubAdminService _subAdminService;
+        private readonly IAdminService _adminService;
 
-        public AccountController(UserManager<ApplicationUser> userManager, IAccountService accountService, RoleManager<ApplicationRole> roleManager, ISubAdminService subAdminService)
+
+        public AccountController(UserManager<ApplicationUser> userManager, IAccountService accountService, RoleManager<ApplicationRole> roleManager, ISubAdminService subAdminService,
+             IAdminService adminService)
         {
             _userManager = userManager;
             _accountService = accountService;
             _roleManager = roleManager;
             _subAdminService = subAdminService;
+            _adminService = adminService;
         }
 
         #region Login/Logout Action 
@@ -30,7 +36,7 @@ namespace Zevopay.Controllers.MVC
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index", "Home");
             return View(new LoginModel());
         }
 
@@ -222,20 +228,29 @@ namespace Zevopay.Controllers.MVC
                         if (applicationRole != null)
                         {
 
-                            var roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
-                            if (roleResult.Succeeded)
+                            //var roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
+                            //if (roleResult.Succeeded)
+                            //{
+                            var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
+                            if (UpdateUser != null)
                             {
-                                var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
-                                if (UpdateUser != null)
+                               
+                                FundManageModel FundManageMode = new FundManageModel()
                                 {
-                                    UpdateUser.Role = applicationRole.Name;
-                                }
-                                var results = await _userManager.UpdateAsync(UpdateUser);
-
-                                _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
-
-                                return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
+                                    MemberId = UpdateUser.MemberId,
+                                    Factor ="Cr",
+                                    Amount=0,
+                                    Description="Registration",
+                                };
+                                _ = await _adminService.FundManageAsync(FundManageMode);
+                                UpdateUser.Role = applicationRole.Name;
                             }
+                           // var results = await _userManager.UpdateAsync(UpdateUser);
+
+                            _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
+
+                            return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
+                            // }
                         }
                     }
 
