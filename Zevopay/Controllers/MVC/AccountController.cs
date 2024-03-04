@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Zevopay.Contracts;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
@@ -175,7 +176,7 @@ namespace Zevopay.Controllers.MVC
                         model.LastName = user.LastName ?? string.Empty;
                         model.Email = user.Email ?? string.Empty;
                         model.PhoneNumber = user.PhoneNumber ?? string.Empty;
-                        model.ApplicationRoleId = _roleManager.Roles.Single(r => r.Name == _userManager.GetRolesAsync(user).Result.Single()).Id;
+                        model.ApplicationRoleId = _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == user.Role).Result.Id;
                         model.Address = user.Address ?? string.Empty;
 
                     }
