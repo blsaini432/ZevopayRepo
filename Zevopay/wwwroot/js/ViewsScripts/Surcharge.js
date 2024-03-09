@@ -5,14 +5,18 @@ $(document).ready(function () {
         var surchargeAmount = $("#SurchargeAmount").val();
         var txnType = $("#TransactionType").val();
         var rangeFrom = $("#RangeFrom").val();
+        var packageId = $("#PackageId").val();
+        var id = $("#Id").val();
         var rangeTo = $("#RangeTo").val();
-        var isFlat = $("#IsFlat").val();
+        var isFlat = $("#IsFlat").is(":checked");
         var formData = {
             surchargeAmount: surchargeAmount,
             TransactionType: txnType,
             RangeFrom: rangeFrom,
             RangeTo: rangeTo,
-            IsFlat: isFlat
+            IsFlat: isFlat,
+            PackageId: packageId,
+            Id:id
         }
 
         if (surchargeAmount == '') {
@@ -33,9 +37,13 @@ $(document).ready(function () {
 
                 toastr.error('RangeTo should be grater then RangeFrom!');
             }
-        } else {
+        }
+        else if (packageId == '') {
+            toastr.error('please select Package!');
+        }
+        else {
             $.ajax({
-                url: "/Admin/Surcharge",
+                url: "/Admin/SaveSurcharge",
                 type: "post",
                 data: formData,
                 success: function (result) {

@@ -56,11 +56,11 @@ $(document).ready(function () {
 
     $(".selectMember").change(function () {
         // Your code to execute when the selection changes
-        var zevoId = $("#memberId").val().split(",");
+        var Id = $("#memberId").val().split(",");
         $.ajax({
             url: "/Admin/GetBalanceByUser",
             type: "post",
-            data: { zevoId: zevoId[1] },
+            data: { Id: Id[1] },
             success: function (result) {
                     $("#balance").text("Wallet Balance: " + result.balance);                     
             },

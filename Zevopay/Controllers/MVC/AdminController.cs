@@ -19,10 +19,6 @@ namespace Zevopay.Controllers.MVC
             _adminService = adminService;
         }
 
-
-
-
-
         #region Credit Debit Transaction
         public IActionResult AdminCreditDebitTransactions()
         {
@@ -36,9 +32,36 @@ namespace Zevopay.Controllers.MVC
         }
         #endregion Credit Debit Transaction
 
+        #region Package
+        public async Task<IActionResult> PackagesList()
+        {
+            return View(await _adminService.GetPackagesAsync());
+        }
 
+        public async Task<IActionResult> Packages(Packages packages)
+        {
+            if (packages?.PackageId != 0)
+                packages = await _adminService.GetPackageByIdAsync(packages.PackageId);
 
+            return View(packages);
+        }
 
+        public async Task<IActionResult> SavePackage(Packages package)
+        {
+            ResponseModel response = new();
+            try
+            {
+                response = await _adminService.SavePackageAsync(package);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.ResultFlag = 0;
+            }
+            return new JsonResult(response);
+
+        }
+        #endregion Package End
 
         #region FundManage
         public async Task<IActionResult> FundForm(FundManageModel model)
@@ -76,14 +99,13 @@ namespace Zevopay.Controllers.MVC
             return new JsonResult(response);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> GetBalanceByUser(string zevoId)
+        public async Task<IActionResult> GetBalanceByUser(string Id)
         {
             WalletTransactions response = new();
             try
             {
-                response = await _adminService.GetBalanceByUser(zevoId);
+                response = await _adminService.GetBalanceByUser(Id);
             }
             catch (Exception ex)
             {
@@ -116,19 +138,22 @@ namespace Zevopay.Controllers.MVC
             return PartialView(await _adminService.GetSurchagesAsync());
         }
 
-        public IActionResult Surcharge()
+        public async Task<IActionResult> Surcharge(Surcharge model)
         {
-            return View();
+            if (model?.Id != 0)
+                model = await _adminService.GetSurchagesByIdAsync(model.Id);
+
+            model.Packages = await _adminService.GetPackagesAsync();
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Surcharge(Surcharge model)
+        public async Task<IActionResult> SaveSurcharge(Surcharge model)
         {
             ResponseModel response = new();
-
             try
             {
-                response = await _adminService.AddSurchargeAsync(model);
+                response = await _adminService.SaveSurchargeAsync(model);
             }
             catch (Exception ex)
             {

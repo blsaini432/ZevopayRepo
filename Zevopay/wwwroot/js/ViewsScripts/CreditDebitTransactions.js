@@ -10,7 +10,7 @@ function fillTransactionData() {
             $('#Transaction-Div').html(d);
         },
         error: function (error) {
-            toastr.error('Failed to get subadminList!');
+            toastr.error('Failed to get walletTransaction List!');
         }
     });
 }

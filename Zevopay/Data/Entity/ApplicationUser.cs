@@ -6,8 +6,6 @@ namespace Zevopay.Data.Entity
 {
     public class ApplicationUser :IdentityUser
     {
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public int ZeoId { get; set; }
         public string? MemberId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -15,5 +13,6 @@ namespace Zevopay.Data.Entity
         public string? Name { get; set; }
         public string? Role { get; set; }
         public DateTime CreateDate { get; set; } = DateTime.Now;
+
     }
 }
