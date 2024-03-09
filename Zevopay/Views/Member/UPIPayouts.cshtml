@@ -1,0 +1,22 @@
+﻿@model UPIPayoutModel
+
+    <h4 class="card-title">UPI Payouts</h4>
+    <p class="card-description">
+        Fill this form for UPI payouts
+    </p>
+    <div class="forms-sample">
+        <div class="form-group">
+        <label asp-for="UPIId">UPIId</label>
+        <input type="text" asp-for="UPIId" class="form-control" placeholder="UPIId">
+        </div>
+        <div class="form-group">
+        <label asp-for="FullName">FullName</label>
+        <input type="text" asp-for="FullName" class="form-control" placeholder="FullName">
+        </div>
+        <div class="form-group">
+        <label asp-for="Amount">Amount</label>
+        <input type="number" asp-for="Amount" class="form-control" step="0.01" min="0" placeholder="Amount">
+        </div>
+        <button type="button" class="btn btn-primary mr-2" id="UPIPayouts_Submit_btn">Submit</button>
+    </div>
+<script src="~/js/viewsscripts/upipayouts.js"></script>

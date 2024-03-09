@@ -8,10 +8,16 @@ namespace Zevopay.Contracts
         Task<ResponseModel> FundManageAsync(FundManageModel model);
         Task<IEnumerable<WalletTransactions>> GetWalletTransactionsAsync();
         Task<IEnumerable<Surcharge>> GetSurchagesAsync();
-        Task<ResponseModel> AddSurchargeAsync(Surcharge model);
+        Task<Surcharge> GetSurchagesByIdAsync(int Id);
+        Task<ResponseModel> SaveSurchargeAsync(Surcharge model);
 
         Task<IEnumerable<WalletTransactions>> GetCeditDebitTransactions();
 
-        Task<WalletTransactions> GetBalanceByUser(string  zevoId);
+        Task<WalletTransactions> GetBalanceByUser(string Id);
+
+        Task<IEnumerable<Packages>> GetPackagesAsync();
+        Task<ResponseModel> SavePackageAsync(Packages packages);
+        Task<Packages> GetPackageByIdAsync(int Id);
+
     }
 }
