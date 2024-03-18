@@ -178,6 +178,7 @@ namespace Zevopay.Controllers.MVC
                         model.PhoneNumber = user.PhoneNumber ?? string.Empty;
                         model.ApplicationRoleId = _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == user.Role).Result.Id;
                         model.Address = user.Address ?? string.Empty;
+                        model.UserName = user.UserName ?? string.Empty;
 
                     }
                 }
@@ -204,7 +205,6 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                //return new JsonResult(new ResponseModel() { Message="Ok"});
                 if (model.Id == null && model != null)
                 {
                     ApplicationRole applicationRole = await _roleManager.FindByIdAsync(model.ApplicationRoleId);
@@ -215,7 +215,7 @@ namespace Zevopay.Controllers.MVC
                         LastName = model.LastName,
                         Email = model.Email,
                         PhoneNumber = model.PhoneNumber,
-                        UserName = model.Email,
+                        UserName = model.UserName,
                         Name = model.FirstName + " " + model.LastName,
                         Address = model.Address,
                         Role = applicationRole?.Name,
@@ -229,46 +229,27 @@ namespace Zevopay.Controllers.MVC
                         if (applicationRole != null)
                         {
 
-                            //var roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
-                            //if (roleResult.Succeeded)
-                            //{
                             var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
                             if (UpdateUser != null)
                             {
-                               
+
                                 FundManageModel FundManageMode = new FundManageModel()
                                 {
                                     MemberId = UpdateUser.MemberId,
-                                    Factor ="Cr",
-                                    Amount=0,
-                                    Description="Registration",
+                                    Factor = "Cr",
+                                    Amount = 0,
+                                    Description = "Registration",
                                 };
                                 _ = await _adminService.FundManageAsync(FundManageMode);
                                 UpdateUser.Role = applicationRole.Name;
                             }
-                           // var results = await _userManager.UpdateAsync(UpdateUser);
 
                             _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
 
                             return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
-                            // }
+
                         }
                     }
-
-                    /*   
-                     *   SubAdminModel sub = new SubAdminModel();
-                                        sub.ApplicationRoles = _roleManager.Roles.Select(r => new SelectListItem
-                                        {
-                                            Text = r.Name,
-                                            Value = r.Id
-                                        }).Where(x => x.Text != "Admin").ToList();
-                                        var errorMessage = new List<string>();
-                                        foreach (var error in result.Errors)
-                                        {
-                                            errorMessage.Add(error.Description);
-                                        }
-                                        TempData["error"] = string.Join(',', errorMessage).Replace("'", "");
-                                        return View(sub);*/
 
                     return new JsonResult(new ResponseModel { ResultFlag = 0, Message = "Error! while Adding Sub Admin" });
 
@@ -283,6 +264,7 @@ namespace Zevopay.Controllers.MVC
                         user.LastName = model.LastName;
                         user.Email = model.Email;
                         user.Address = model.Address;
+                        user.UserName = model.UserName;
                         user.PhoneNumber = model.PhoneNumber;
                         user.Name = model.FirstName + " " + model.LastName;
                         result = await _userManager.UpdateAsync(user);
@@ -290,20 +272,6 @@ namespace Zevopay.Controllers.MVC
                         {
                             return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is Updated successfully!" });
                         }
-                        /*                        
-                         *                        SubAdminModel sub = new SubAdminModel();
-                                                sub.ApplicationRoles = _roleManager.Roles.Select(r => new SelectListItem
-                                                {
-                                                    Text = r.Name,
-                                                    Value = r.Id
-                                                }).Where(x => x.Text != "Admin").ToList();
-                                                var errorMessage = new List<string>();
-                                                foreach (var error in result.Errors)
-                                                {
-                                                    errorMessage.Add(error.Description);
-                                                }
-                                                TempData["error"] = string.Join(',', errorMessage).Replace("'", "");
-                                                return View(sub);*/
 
                     }
                     return new JsonResult(new ResponseModel { ResultFlag = 0, Data = result.Errors });
@@ -316,6 +284,25 @@ namespace Zevopay.Controllers.MVC
         }
 
         #endregion
+
+
+        public async Task<IActionResult> UserProfile(SubAdminModel model)
+        {
+            ApplicationUser? user = await _userManager.FindByIdAsync(GetCurrentUserAsync().Result.Id);
+
+            if (user != null)
+            {
+                model.Id = user.Id;
+                model.UserName = user.UserName;
+                model.FirstName = user.FirstName ?? string.Empty;
+                model.LastName = user.LastName ?? string.Empty;
+                model.Email = user.Email ?? string.Empty;
+                model.PhoneNumber = user.PhoneNumber ?? string.Empty;
+                model.Address = user.Address ?? string.Empty;
+
+            }
+            return View(model);
+        }
 
         private string RendamNumber(int digit)
         {
@@ -389,6 +376,8 @@ namespace Zevopay.Controllers.MVC
             return Json(new ResponseModel { ResultFlag = 0, Message = "Failed" });
         }*/
         #endregion
+
+        public async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);
     }
 
 

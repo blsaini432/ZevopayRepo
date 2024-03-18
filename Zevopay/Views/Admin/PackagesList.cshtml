@@ -4,27 +4,28 @@
 <div class="mt-2 mb-2">
     <a asp-controller="Admin" asp-action="Packages" class="btn btn-primary btn-rounded btn-fw">Add Package</a>
 </div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>PackageName</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model?.Count() > 0)
-        {
-            @foreach (var item in Model)
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>PackageName</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model?.Count() > 0)
             {
-                <tr>
-                    <td>@item.PackageName</td>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.PackageName</td>
 
-                    <td>
-                        <a class="btn btn-secondary btn-rounded btn-fw" asp-controller="Admin" asp-action="Packages" asp-route-PackageId="@item.PackageId">Edit</a>
-                    </td>
-                </tr>
+                        <td>
+                            <a class="btn btn-secondary btn-rounded btn-fw" asp-controller="Admin" asp-action="Packages" asp-route-PackageId="@item.PackageId">Edit</a>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
