@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Zevopay.Contracts;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
-using Zevopay.Services;
 
 
 namespace Zevopay.Controllers.MVC
@@ -189,7 +187,6 @@ namespace Zevopay.Controllers.MVC
                         Text = r.Name,
                         Value = r.Id
                     }).Where(x => x.Text != "Admin").ToList();
-
                 }
             }
             catch (Exception ex)
@@ -225,29 +222,32 @@ namespace Zevopay.Controllers.MVC
                     var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
-
                         if (applicationRole != null)
                         {
-
-                            var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
-                            if (UpdateUser != null)
+                            var roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
+                            if (roleResult.Succeeded)
                             {
-
-                                FundManageModel FundManageMode = new FundManageModel()
+                                var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
+                                if (UpdateUser != null)
                                 {
-                                    MemberId = UpdateUser.MemberId,
-                                    Factor = "Cr",
-                                    Amount = 0,
-                                    Description = "Registration",
-                                };
-                                _ = await _adminService.FundManageAsync(FundManageMode);
-                                UpdateUser.Role = applicationRole.Name;
+
+                                    FundManageModel FundManageMode = new FundManageModel()
+                                    {
+                                        MemberId = UpdateUser.MemberId,
+                                        Factor = "Cr",
+                                        Amount = 0,
+                                        Description = "Registration",
+                                    };
+                                    _ = await _adminService.FundManageAsync(FundManageMode);
+
+                                    UpdateUser.Role = applicationRole.Name;
+                                }
+                                var results = await _userManager.UpdateAsync(UpdateUser);
+
+                                _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
+
+                                return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
                             }
-
-                            _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
-
-                            return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
-
                         }
                     }
 
