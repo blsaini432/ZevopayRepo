@@ -15,6 +15,7 @@ namespace Zevopay.Models
         [Required(ErrorMessage = "Enter First Name")]
         public string FirstName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public string UserName { get; set; }
         [Required(ErrorMessage = "The Email field is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }

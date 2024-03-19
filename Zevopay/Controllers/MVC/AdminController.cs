@@ -28,7 +28,6 @@ namespace Zevopay.Controllers.MVC
         public async Task<IActionResult> AdminCreditDebitTransactionsPartial()
         {
             return PartialView(await _adminService.GetCeditDebitTransactions());
-
         }
         #endregion Credit Debit Transaction
 

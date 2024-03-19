@@ -37,7 +37,7 @@
 </head>
 <body>
     <div id="loader" class="loader-container" style="display:none">
-        <img src="~/images/loader.gif" alt="Loading..." class="loader" />
+        <img src="~/images/Spinner-1s-200px.gif" alt="Loading..." class="loader" />
     </div>
     @{
         var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
@@ -75,6 +75,10 @@
                                 <span class="nav-profile-name">@User.Identity.Name</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                                <a class="dropdown-item" asp-controller="Account" asp-action="UserProfile">
+                                    <i class=" typcn typcn-user-outline text-primary"></i>
+                                    Profile
+                                </a>
                                 <a class="dropdown-item">
                                     <i class="typcn typcn-cog-outline text-primary"></i>
                                     Settings
@@ -93,6 +97,7 @@
                 </div>
             </nav>
             <!-- partial -->
+            
             <div class="container-fluid page-body-wrapper">
                 <!-- partial:partials/_settings-panel.html -->
                 <div class="theme-setting-wrapper">
@@ -274,7 +279,6 @@
                         </li>
                         @if (User.IsInRole($"{RolesConstants.AdminRole}"))
                         {
-
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="SubAdminList">
                                     <i class="typcn typcn-document-text menu-icon"></i>
@@ -332,7 +336,13 @@
                         }
                         @if (User.IsInRole(RolesConstants.MemberRole))
                         {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Member" asp-action="Wallet">
+                                    <i class="typcn typcn-document-text menu-icon"></i>
+                                    <span class="menu-title">Wallet</span>
+                                </a>
 
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link collapsed" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
                                     <i class="typcn typcn-film menu-icon"></i>
@@ -344,7 +354,7 @@
                                         <li>
                                             <a class="nav-link" asp-controller="Member" asp-action="UPIPayouts">
                                                 <i class="typcn typcn-film menu-icon"></i>
-                                                <span >UPI Payouts</span>
+                                                <span>UPI Payouts</span>
                                             </a>
                                         </li>
                                         <li>
@@ -386,8 +396,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                                    <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2020 <a href="https://www.bootstrapdash.com/" class="text-muted" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
-                                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-muted">Free <a href="https://www.bootstrapdash.com/" class="text-muted" target="_blank">Bootstrap dashboard</a> templates from Bootstrapdash.com</span>
+                                    <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © Zevopay.in</span>
                                 </div>
                             </div>
                         </div>
@@ -431,7 +440,7 @@
     <script src="~/js/typeahead.js"></script>
     <script src="~/js/select2.js"></script>
 
- 
+
 </body>
 
 </html>

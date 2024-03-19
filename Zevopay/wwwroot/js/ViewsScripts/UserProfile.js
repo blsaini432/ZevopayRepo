@@ -1,13 +1,11 @@
 ﻿$(document).ready(function () {
-    $('#AddOrUpdate-SubAdmin').on('click', function (e) {
+    $('#Update_Profile').on('click', function (e) {
         e.preventDefault();
-        var id = $('#subAdminId').val();
-        var fName = $('#firstName').val();
-        var lName = $('#lastName').val();
-        var email = $('#email').val();
-        var password = $('#password').val();
-        var address = $('#address').val();
-        var roleId = $('#RoleId').val();
+        var id = $('#Id').val();
+        var fName = $('#FirstName').val();
+        var lName = $('#LastName').val();
+        var email = $('#Email').val();
+        var address = $('#Address').val();
         var phone = $('#PhoneNumber').val();
         var userName = $('#UserName').val();
 
@@ -17,30 +15,20 @@
             toastr.error(`LastName is required!`);
         } else if (userName == '') {
             toastr.error(`userName is required!`);
-        } else if (password == '') {
-            if (id == '') {
-                toastr.error(`Password is required!`);
-            }
         } else if (email == '') {
             toastr.error(`Email is required!`);
         } else if (address == '') {
             toastr.error(`Address is required!`);
         } else if (phone == '') {
             toastr.error(`Phone is required!`);
-        } else if (roleId == '') {
-            if (id == '') {
-                toastr.error(`Please select Role!`);
-            }
         }
         else {
             var formData = {
                 FirstName: fName,
                 UserName: userName,
                 LastName: lName,
-                ApplicationRoleId: roleId,
                 Address: address,
                 Email: email,
-                Password: password,
                 PhoneNumber: phone,
                 Id: id
             };
@@ -53,11 +41,16 @@
                     if (d.message != '') {
 
                         if (d.resultFlag == 1) {
-                            toastr.success(d.message);
-                            window.location.href = "/Account/SubAdminList";
+                            toastr.success('profile successfully updated!', 'Your fun', {
+                                timeOut: 1000,
+                                preventDuplicates: true,
+                                onHidden: function () {
+                                    window.location.href = "/Home/Index";
+                                }
+                            });
                         } else {
 
-                            toastr.error(d.message);
+                            toastr.error('error during update profile!');
                         }
                     }
                 },

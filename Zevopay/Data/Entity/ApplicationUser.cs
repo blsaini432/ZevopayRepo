@@ -13,6 +13,7 @@ namespace Zevopay.Data.Entity
         public string? Name { get; set; }
         public string? Role { get; set; }
         public DateTime CreateDate { get; set; } = DateTime.Now;
+        //public int PackageId { get; set; }
 
     }
 }

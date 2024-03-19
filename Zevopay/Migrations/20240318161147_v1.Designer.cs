@@ -12,8 +12,8 @@ using Zevopay.Data;
 namespace Zevopay.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240304163110_v4")]
-    partial class v4
+    [Migration("20240318161147_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

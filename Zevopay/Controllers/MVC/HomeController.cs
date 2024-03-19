@@ -26,14 +26,26 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                model.Balance = _adminService.GetBalanceByUser(GetCurrentUserAsync().Result.Id).Result.Balance;
+                var role = _userManager.GetRolesAsync(GetCurrentUserAsync().Result).Result.FirstOrDefault();
+
+                if (role != RolesConstants.AdminRole)
+                {
+
+                    model.Balance = _adminService.GetBalanceByUser(GetCurrentUserAsync().Result.Id).Result.Balance;
+                }
+                else
+                {
+
+                }
             }
             catch (Exception ex)
             {
             }
             return View(model);
         }
-        private async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);
+
+        public async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);
+
         public IActionResult Privacy()
         {
             return View();
