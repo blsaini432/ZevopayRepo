@@ -26,7 +26,7 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                var role = _userManager.GetRolesAsync(GetCurrentUserAsync().Result).Result.FirstOrDefault();
+               var role = _userManager.GetRolesAsync(GetCurrentUserAsync().Result).Result.FirstOrDefault();
 
                 if (role != RolesConstants.AdminRole)
                 {
@@ -35,7 +35,7 @@ namespace Zevopay.Controllers.MVC
                 }
                 else
                 {
-
+                    model.Balance = _adminService.GetTotalBalanceOfAllMembersAsync().Result.Balance;
                 }
             }
             catch (Exception ex)

@@ -4,6 +4,24 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Balance: @Model?.Balance</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+   
+
+    <div class="row">
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <div class="d-flex align-items-center justify-content-between justify-content-md-center justify-content-xl-between flex-wrap mb-4">
+                        <div>
+                            <p class="mb-2 text-md-center text-lg-left">Total Balance</p>
+                            <h1 class="mb-0"> @Model?.Balance</h1>
+                        </div>
+                        <i class="typcn typcn-briefcase icon-xl text-secondary"></i>
+                    </div>
+                    <canvas id="expense-chart" height="73" width="277" style="display: block; width: 277px; height: 73px;" class="chartjs-render-monitor"></canvas>
+                </div>
+            </div>
+        </div>
+     
+    </div>
 </div>
