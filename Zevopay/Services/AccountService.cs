@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Dapper;
+using Microsoft.AspNetCore.Identity;
 using Zevopay.Contracts;
+using Zevopay.Data;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
 
@@ -9,16 +11,28 @@ namespace Zevopay.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IDapperDbContext _context;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IDapperDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
         public async Task<ResponseModel> Login(LoginModel model)
         {
+            ApplicationUser user = new();
             ResponseModel response = new ResponseModel();
-            var user = await _userManager.FindByEmailAsync(model.Email.Trim());
+            try
+            {
+
+                 user = await _userManager.FindByEmailAsync(model.Email.Trim());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             if (user == null)
             {
                 return response = new ResponseModel { Data = "", ResultFlag = 0, Message = "User not found!" };
@@ -47,6 +61,13 @@ namespace Zevopay.Services
         public async void Logout()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task SetUserTwoFactorTrue(string userId)
+        {
+            string query = "UPDATE AspNetUsers SET isTwoFactorEnabled = @IsTwoFactorEnabled WHERE Id = @UserId";
+             await _context.ConnectDb.ExecuteAsync(query, new { IsTwoFactorEnabled = true, UserId = userId });
+
         }
 
         /*public async Task<ResponseModel> ResetPassword(ResetPasswordModel model)

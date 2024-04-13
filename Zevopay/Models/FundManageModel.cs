@@ -9,5 +9,7 @@ namespace Zevopay.Models
         public string Factor { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }
-    }
+
+        public int TwoFactorCode { get; set;}
+}
 }
