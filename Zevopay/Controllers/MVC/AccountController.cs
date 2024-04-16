@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Authenticator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using Zevopay.Contracts;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
@@ -18,24 +21,30 @@ namespace Zevopay.Controllers.MVC
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ISubAdminService _subAdminService;
         private readonly IAdminService _adminService;
-
+        private readonly ITwoFactorAuthService _twoFactorAuthService;
+        private readonly IConfiguration _configuration;
 
         public AccountController(UserManager<ApplicationUser> userManager, IAccountService accountService, RoleManager<ApplicationRole> roleManager, ISubAdminService subAdminService,
-             IAdminService adminService)
+             IAdminService adminService, ITwoFactorAuthService twoFactorAuthService, IConfiguration configuration)
         {
             _userManager = userManager;
             _accountService = accountService;
             _roleManager = roleManager;
             _subAdminService = subAdminService;
             _adminService = adminService;
+            _twoFactorAuthService = twoFactorAuthService;
+            _configuration = configuration;
         }
 
         #region Login/Logout Action 
         [AllowAnonymous]
         public IActionResult Login()
         {
+            var IsAuthenticated = HttpContext.Session.GetString("IsAuthenticated");
+
             if (User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "Home");
+
             return View(new LoginModel());
         }
 
@@ -45,10 +54,17 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                if (ModelState.IsValid)
+
+                var response = await _accountService.Login(model);
+                if (response.ResultFlag == 1)
                 {
-                    return Json(await _accountService.Login(model));
+                    var isTwoFactorEnabled = _userManager.GetUserAsync(HttpContext.User).Result.isTwoFactorEnabled;
+                    response.ResultFlag = !isTwoFactorEnabled ? 2 : 3;
+                    response.Data = new { Email = model.Email };
                 }
+
+                return Json(response);
+
             }
             catch (Exception ex)
             {
@@ -57,11 +73,75 @@ namespace Zevopay.Controllers.MVC
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult TwoFactorAuth(string Email,bool isTwoFactorAuthenticate)
+        {
+            try
+            {
+
+                LoginModel model = new();
+                string googleAuthKey = _configuration["GoogleAuthKey"];
+                string UserUniqueKey = $"{Email}{googleAuthKey}";
+
+                //Two Factor Authentication Setup
+                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
+                var setupInfo = TwoFacAuth.GenerateSetupCode("Zevopay", Email, ConvertSecretToBytes(UserUniqueKey, false), 300);
+                HttpContext.Session.SetString("SecretKey", UserUniqueKey);
+
+                model.BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
+                model.SetupCode = setupInfo.ManualEntryKey;
+                model.IsUserTwoFactorEnabled = isTwoFactorAuthenticate;
+                return View(model);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TwoFactorAuth(LoginModel model)
+        {
+            ResponseModel response = new();
+            try
+            {
+                string UserUniqueKey = HttpContext.Session.GetString("SecretKey").ToString();
+
+                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
+                bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, model.AuthenticatorCode, false);
+                if (isValid)
+                {
+                    if(!model.IsUserTwoFactorEnabled)
+                    {
+                        var user =await GetCurrentUserAsync();
+                        await _accountService.SetUserTwoFactorTrue(user.Id);
+                    }
+                    HttpContext.Session.SetString("IsAuthenticated", "true");
+                    response.ResultFlag = 1;
+                    response.Message = "Successfully! login";
+                }
+                else
+                {
+                    response.ResultFlag = 0;
+                    response.Message = "Google Two Factor PIN is expired or wrong!";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.ResultFlag = 0;
+            }
+            return Json(response);
+        }
         public async Task<IActionResult> Logout()
         {
             _accountService.Logout();
             return RedirectToAction("Login", "Account");
         }
+
+        private static byte[] ConvertSecretToBytes(string secret, bool secretIsBase32) =>
+           secretIsBase32 ? Base32Encoding.ToBytes(secret) : Encoding.UTF8.GetBytes(secret);
 
         public IActionResult AccessDenied()
         {
@@ -217,7 +297,7 @@ namespace Zevopay.Controllers.MVC
                         Address = model.Address,
                         Role = applicationRole?.Name,
                         CreateDate = model.CreateDate,
-                        MemberId = $"RT{RendamNumber(6)}"
+                        MemberId = $"RT{RandamNumber(6)}"
                     };
                     var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
@@ -304,7 +384,7 @@ namespace Zevopay.Controllers.MVC
             return View(model);
         }
 
-        private string RendamNumber(int digit)
+        private string RandamNumber(int digit)
         {
             Random generator = new Random();
             return generator.Next(0, 1000000).ToString($"D{digit}");

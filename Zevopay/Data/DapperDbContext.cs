@@ -16,6 +16,8 @@
                 ConnectionString = configuration.GetConnectionString("ZevopayDb") ?? throw new ArgumentNullException("Connection string");
             }
 
+            public IDbConnection ConnectDb => new SqlConnection(ConnectionString);
+
             public async Task<IEnumerable<T>> QueryAsync<T>(string text, object? parameters = default, int? timeout = null, CommandType? type = null)
             {
                 using var connection = new SqlConnection(ConnectionString);
