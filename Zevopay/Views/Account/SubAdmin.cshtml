@@ -8,16 +8,16 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label">First Name</label>
-                <div class="col-sm-9">
+                <label class="col-sm-4 col-form-label">First Name</label>
+                <div class="col-sm-8">
                     <input type="text" class="form-control" asp-for="FirstName" id="firstName">
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Last Name</label>
-                <div class="col-sm-9">
+                <label class="col-sm-4 col-form-label">Last Name</label>
+                <div class="col-sm-8">
                     <input type="text" class="form-control" asp-for="LastName" id="lastName">
                 </div>
             </div>
@@ -26,17 +26,44 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Email</label>
-                <div class="col-sm-9">
+                <label class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-8">
                     <input type="email" class="form-control" asp-for="Email" id="email" />
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        @* <div class="col-md-6">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label" asp-for="UserName">Username</label>
                 <div class="col-sm-9">
                     <input type="text" class="form-control" asp-for="UserName">
+                </div>
+            </div>
+        </div> *@
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">PhoneNumber</label>
+                <div class="col-sm-8">
+                    <input type="number" min="1" class="form-control" maxlength="10" id="PhoneNumber" asp-for="PhoneNumber" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">AadharNumber</label>
+                <div class="col-sm-8">
+                    <input type="PanNumber" class="form-control" maxlength="12" asp-for="PanNumber" id="PanNumber" />
+                </div>
+            </div>
+        </div>
+       
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">PanNumber</label>
+                <div class="col-sm-8">
+                    <input type="PanNumber" min="1" class="form-control" id="PanNumber" asp-for="PanNumber" />
                 </div>
             </div>
         </div>
@@ -77,19 +104,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">PhoneNumber</label>
-                <div class="col-sm-9">
-                    <input type="number" min="1" class="form-control" id="PhoneNumber" asp-for="PhoneNumber" />
-                </div>
-            </div>
-        </div>
+        
     </div>
     <input type="button" class="btn btn-primary btn-rounded btn-fw" id="AddOrUpdate-SubAdmin" value="@(string.IsNullOrEmpty(Model?.Id) ?"Submit" :"Update")" />
     <a class="btn btn-secondary btn-rounded btn-fw" asp-controller="Account" asp-action="SubAdminList">Back</a>
 
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script src="~/js/subadmin.js"></script>
+
