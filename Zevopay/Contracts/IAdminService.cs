@@ -14,6 +14,7 @@ namespace Zevopay.Contracts
         Task<IEnumerable<WalletTransactions>> GetCeditDebitTransactions();
 
         Task<WalletTransactions> GetBalanceByUser(string Id);
+        Task<WalletTransactions> GetTotalBalanceOfAllMembersAsync();
 
         Task<IEnumerable<Packages>> GetPackagesAsync();
         Task<ResponseModel> SavePackageAsync(Packages packages);

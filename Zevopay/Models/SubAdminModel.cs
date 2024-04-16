@@ -44,11 +44,15 @@ namespace Zevopay.Models
         public int TotalCount { get; set; }
         public string? SearchText { get; set; }
         public int TotalRecord { get; set; }
-        public int ZeoId { get; set; }
+        public int AadharNumber { get; set; }
 
         public string? Role { get; set; }
+        public string? PanNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public bool LockoutEnabled { get; set; }
+
+
+
     }
    
 

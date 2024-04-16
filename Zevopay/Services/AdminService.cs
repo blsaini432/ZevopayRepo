@@ -155,9 +155,9 @@ namespace Zevopay.Services
             var data = await _dapperDbContext.QueryFirstOrDefaultAsync<WalletTransactions>(query);
             return data;
         }
-        public async Task<WalletTransactions> GetTotalBalanceOfAllMembersAsync(string Id)
+        public async Task<WalletTransactions> GetTotalBalanceOfAllMembersAsync()
         {
-            var query = $"select Sum(Balance) from WalletBalance where Id='{Id}'";
+            var query = $"select Sum(Balance) as Balance from WalletBalance";
             var data = await _dapperDbContext.QueryFirstOrDefaultAsync<WalletTransactions>(query);
             return data;
         }
