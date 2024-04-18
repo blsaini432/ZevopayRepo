@@ -1,30 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Zevopay.Contracts;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
-using static Azure.Core.HttpHeader;
-using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace Zevopay.Controllers.MVC
 {
     public class MemberController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAdminService _adminService;
         private readonly IMemberService _memberService;
-        private readonly ICommonService _commonService;
-        private readonly IApiService _apiService;
         private readonly IPayoutsService _payoutsService;
 
-        public MemberController(UserManager<ApplicationUser> userManager, IAdminService adminService, IMemberService memberService, ICommonService commonService, IApiService apiService, IPayoutsService payoutsService)
+        public MemberController(UserManager<ApplicationUser> userManager, IMemberService memberService, IPayoutsService payoutsService)
         {
             _userManager = userManager;
-            _adminService = adminService;
             _memberService = memberService;
-            _commonService = commonService;
-            _apiService = apiService;
             _payoutsService = payoutsService;
         }
 
