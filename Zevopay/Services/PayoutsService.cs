@@ -43,23 +43,23 @@ namespace Zevopay.Services
             var requestPayouts = new PayoutsMoneyTransferRequestModel
             {
                 mode = model.PaymentMode ?? string.Empty,
-                fund_account = new FundAccountMoneyTransRequestModel()
+                fund_account = new FundAccount
                 {
                     account_type = "bank_account",
-                    bank_account = new BankAccountMoneyTransRequestModel()
+                    bank_account = new BankAccount
                     {
                         name = model.FullName ?? string.Empty,
                         ifsc = model.IFSCCode,
                         account_number = model.AccountNumber.ToString()
                     },
-                    contact = new ContactMoneyTransRequestModel
+                    contact = new Contact
                     {
                         name = "Ramlakhan",
                         email = "Ramlakhan@example.com",
                         contact = "9876543210",
                         type = "vendor",
                         reference_id = "Acme Contact ID 12345",
-                        notes = new NotesMoneyTransRequestModel()
+                        notes = new Notes
                         {
                             notes_key_1 = "Tea, Earl Grey, Hot",
                             notes_key_2 = "Tea, Earl Grey… decaf."
@@ -74,7 +74,7 @@ namespace Zevopay.Services
                 queue_if_low_balance = true,
                 reference_id = referenceId,
                 narration = "Acme Corp Fund Transfer",
-                notes = new NotesMoneyTransRequestModel()
+                notes = new Notes
                 {
                     notes_key_1 = "Tea, Earl Grey, Hot",
                     notes_key_2 = "Tea, Earl Grey… decaf."
@@ -83,9 +83,9 @@ namespace Zevopay.Services
 
             var apiResponse = await _apiService.PayoutsMoneyTransferResponseAsync(requestPayouts);
 
-            if (apiResponse?.error != null && !string.IsNullOrEmpty(apiResponse?.error?.description.ToString()))
+            if (apiResponse?.error != null && !string.IsNullOrEmpty(apiResponse?.error?.description))
             {
-                response.Message = apiResponse?.error?.description?.ToString() ?? string.Empty;
+                response.Message = apiResponse?.error?.description ?? string.Empty;
                 response.ResultFlag = 0;
                 return response;
             }
@@ -111,5 +111,6 @@ namespace Zevopay.Services
             return await _adminService.FundManageAsync(updateFundModel);
         }
         #endregion UpdateWallet End
+
     }
 }
