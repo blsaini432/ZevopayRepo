@@ -292,7 +292,7 @@ namespace Zevopay.Controllers.MVC
                         LastName = model.LastName,
                         Email = model.Email,
                         PhoneNumber = model.PhoneNumber,
-                        UserName = model.UserName,
+                       UserName = model.Email,
                         Name = model.FirstName + " " + model.LastName,
                         Address = model.Address,
                         Role = applicationRole?.Name,
@@ -326,12 +326,12 @@ namespace Zevopay.Controllers.MVC
 
                                 _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
 
-                                return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
+                                return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Member added successfully" });
                             }
                         }
                     }
 
-                    return new JsonResult(new ResponseModel { ResultFlag = 0, Message = "Error! while Adding Sub Admin" });
+                    return new JsonResult(new ResponseModel { ResultFlag = 0, Message = "Error! while Adding Member" });
 
                 }
                 else

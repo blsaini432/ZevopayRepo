@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Google.Authenticator;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -87,8 +88,18 @@ namespace Zevopay.Controllers.MVC
             ResponseModel response = new();
             try
             {
-                //return Ok();
-                response = await _adminService.FundManageAsync(model);
+                string UserUniqueKey = HttpContext.Session.GetString("SecretKey").ToString();
+                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
+                bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, model.TwoFactorCode, false);
+                if (isValid)
+                {
+                    response = await _adminService.FundManageAsync(model);
+                }
+                else
+                {
+                    response.Message = "Enter Valid Two Factor Code";
+                    response.ResultFlag = 0;
+                }
             }
             catch (Exception ex)
             {

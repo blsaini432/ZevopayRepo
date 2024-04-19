@@ -131,5 +131,30 @@ namespace Zevopay.Controllers.MVC
                 throw;
             }
         }
+        public async Task<IActionResult> PayoutTransactions()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IActionResult> PayoutTransactionsPartial()
+        {
+            try
+            {
+                return PartialView(await _memberService.GetWalletTransactionsAsync(_userManager.GetUserAsync(HttpContext.User).Result.Id));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
     }
 }

@@ -7,11 +7,13 @@ $(document).ready(function () {
         var factor = $("#factor").val();
         var amount = $("#amount").val().trim();
         var description = $("#description").val();
+        var twoFactorCode = $("#twoFactorCode").val();
         var formData = {
             MemberId: memberId[0],
             Factor: factor,
             Amount: amount,
-            Description: description
+            Description: description,
+            TwoFactorCode: twoFactorCode
         }
 
         if (memberId == '') {
@@ -25,8 +27,14 @@ $(document).ready(function () {
                 toastr.error('Amount should be grater then 0!');
             }
         } else if (description == '' || description == ' ') {
-            toastr.error('please enter description!');
-        } else {
+            toastr.error('Enter description!');
+        }
+
+        else if (twoFactorCode == "" || twoFactorCode == ' ') {
+            toastr.error('Enter Two Factor Code !');
+        }
+
+        else {
             $.ajax({
                 url: "/Admin/FundManage",
                 type: "post",
@@ -34,13 +42,13 @@ $(document).ready(function () {
                 success: function (result) {
                     if (result.resultFlag == 1) {
                         toastr.success(result.message);
-                        setTimeout(pagrChange,1000)
-                      
+                        setTimeout(pagrChange, 1000)
+
                     }
                     else {
                         toastr.error(result.message);
                     }
-                  
+
                 },
                 error: function (error) {
                     toastr.error("error");
@@ -62,7 +70,7 @@ $(document).ready(function () {
             type: "post",
             data: { Id: Id[1] },
             success: function (result) {
-                    $("#balance").text("Wallet Balance: " + result.balance);                     
+                $("#balance").text("Wallet Balance: " + result.balance);
             },
             error: function (error) {
                 toastr.error("error");
