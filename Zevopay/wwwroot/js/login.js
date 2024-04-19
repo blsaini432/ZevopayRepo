@@ -40,7 +40,7 @@
                     } 
                 },
                 error: function (error) {
-                    toastr.error('Login Failed!');
+                    toastr.error('internal server error please try again later!');
                     hideLoader();
                 }
             });

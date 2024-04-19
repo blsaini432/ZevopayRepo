@@ -2,6 +2,7 @@
 using RestSharp;
 using System.Text.Json.Serialization;
 using Zevopay.Contracts;
+using Zevopay.HelperClasses;
 using Zevopay.Models;
 
 namespace Zevopay.Services
@@ -9,57 +10,48 @@ namespace Zevopay.Services
     public class ApiService : IApiService
     {
 
-        private readonly string apiKey = "rzp_test_lpwYKAvQbwM8P7";
-        private readonly string secretKey = "RroYahFulRKmMxsAPTo69XMV";
-        private readonly string apiUrl = "https://api.razorpay.com/v1/";
         public async Task<PayoutsMoneyTransferResponseModel> PayoutsMoneyTransferResponseAsync(PayoutsMoneyTransferRequestModel requestModel)
         {
-            ResponseModel response1 = new();
-            var client = new RestClient(apiUrl);
-            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(apiKey + ":" + secretKey)}");
-
+            var client = new RestClient(Constants.apiBaseUrl);
+            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(Constants.apiKey + ":" + Constants.apiBaseUrl)}");
             var request = new RestRequest("payouts", Method.Post);
             request.AddJsonBody(requestModel);
-            try
-            {
 
-                var response = await client.ExecuteAsync<PayoutsMoneyTransferResponseModel>(request);
-                if (response == null) return new() { Error = new Error() { Description = "Error!" } };
-                return JsonConvert.DeserializeObject<PayoutsMoneyTransferResponseModel>(response.Content) ?? new();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
+            var response = await client.ExecuteAsync(request);
+            if (response == null) return new() { Error = new Error() { Description = "Error!" } };
+            return JsonConvert.DeserializeObject<PayoutsMoneyTransferResponseModel>(response.Content) ?? new();
         }
 
         public async Task<UpiPayoutResponseModel> UPIPayoutsAsync(UpiPayoutRequestModel requestModel)
         {
-            var client = new RestClient(apiUrl);
-            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(apiKey + ":" + secretKey)}");
-
+            var client = new RestClient(Constants.apiBaseUrl);
+            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(Constants.apiKey + ":" + Constants.secretKey)}");
             var request = new RestRequest("payouts", Method.Post);
             request.AddJsonBody(requestModel);
-            try
-            {
 
-                var response = await client.ExecuteAsync<UpiPayoutResponseModel>(request);
-                if (response == null) return new() { Error = new Error() { Description = "Error!" } };
-                return JsonConvert.DeserializeObject<UpiPayoutResponseModel>(response.Content) ?? new();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
+            var response = await client.ExecuteAsync(request);
+            if (response == null) return new() { Error = new Error() { Description = "Error!" } };
+            return JsonConvert.DeserializeObject<UpiPayoutResponseModel>(response.Content) ?? new();
         }
+
+        public async Task<PayoutsLinkResponseModel> PayoutsLinkAsync(PayoutsLinkRequestModel requestModel)
+        {
+            var client = new RestClient(Constants.apiBaseUrl);
+            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(Constants.apiKey + ":" + Constants.secretKey)}");
+            var request = new RestRequest("payout-links", Method.Post);
+            request.AddJsonBody(requestModel);
+
+            var response = await client.ExecuteAsync(request);
+            if (response == null) return new() { Error = new Error() { Description = "Error!" } };
+            return JsonConvert.DeserializeObject<PayoutsLinkResponseModel>(response.Content) ?? new();
+        }
+
         private string Base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             return System.Convert.ToBase64String(plainTextBytes);
         }
+
+
     }
 }

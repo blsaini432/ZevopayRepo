@@ -3,10 +3,11 @@
 
         var phoneNumber = $("#PhoneNumber").val();
         var email = $("#Email").val();
-
+        var amount = $("#Amount").val();
         var formData = {
             PhoneNumber: phoneNumber,
-            Email: email
+            Email: email,
+            Amount:amount
         }
 
         if (!phoneNumber && !email) {
@@ -18,6 +19,12 @@
 
         } else if (email && !validateEmail(email)) {
             toastr.error('please enter a valid email!');
+
+        } else if (!amount) {
+            toastr.error('please enter amount');
+
+        } else if (amount && amount <= 0) {
+            toastr.error('amount should be greater then 0!');
 
         } else {
             $.ajax({
@@ -34,7 +41,7 @@
 
                 },
                 error: function (error) {
-                    toastr.error("error");
+                    toastr.error("internal server error please try again later!");
                 }
             });
         }

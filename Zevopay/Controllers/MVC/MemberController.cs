@@ -24,13 +24,22 @@ namespace Zevopay.Controllers.MVC
         {
             return View();
         }
+
         public async Task<IActionResult> UPIPayoutsSaveAsync(UPIPayoutModel model)
         {
-            ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User) ?? new();
-            var response = await _payoutsService.UpiPayoutAsync(user,model);
+            ResponseModel response = new();
+            try
+            {
+                ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User) ?? new();
+                response = await _payoutsService.UpiPayoutAsync(user, model);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.ResultFlag = 0;
+            }
             return new JsonResult(response);
         }
-
         #endregion UPIPayouts End
 
         #region MoneyTransfer
@@ -47,7 +56,6 @@ namespace Zevopay.Controllers.MVC
             {
                 ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User) ?? new();
                 response = await _payoutsService.PayoutsUsingBankAccountAsync(user, model);
-                return new JsonResult(response);
             }
             catch (Exception ex)
             {
@@ -65,15 +73,21 @@ namespace Zevopay.Controllers.MVC
         }
 
         [HttpPost]
-        public async Task<IActionResult> PayoutsLinkSaveAsync()
+        public async Task<IActionResult> PayoutsLinkSaveAsync(PayoutsLinkModel model)
         {
-            /*string userId = GetCurrentUserAsync().Result.Id;
+            ResponseModel response = new();
+            try
+            {
+                ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User) ?? new();
+                response = await _payoutsService.PayoutsLinkAsync(user, model);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.ResultFlag = 0;
+            }
+            return new JsonResult(response);
 
-            var updateWalletResult = await UpdateWalletAsync(userId, model.Amount);
-
-            if (updateWalletResult != null && updateWalletResult.ResultFlag == 0) return new JsonResult(updateWalletResult);*/
-
-            return new JsonResult(new ResponseModel() { ResultFlag = 1, Message = "Link successfully! Sent" });
         }
         #endregion PayoutsLink End
 
