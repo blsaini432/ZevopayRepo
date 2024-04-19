@@ -24,7 +24,7 @@ namespace Zevopay.Services
         }
         #endregion Constructor End
 
-        #region PayoutsMoneyTransfer
+        #region PayoutsBankAccount
         public async Task<ResponseModel> PayoutsUsingBankAccountAsync(ApplicationUser user, MoneyTransferModel model)
         {
             ResponseModel response = new();
@@ -42,57 +42,124 @@ namespace Zevopay.Services
 
             var requestPayouts = new PayoutsMoneyTransferRequestModel
             {
-                mode = model.PaymentMode ?? string.Empty,
-                fund_account = new FundAccount
+                Mode = model.PaymentMode ?? string.Empty,
+                Fund_account = new FundAccount
                 {
-                    account_type = "bank_account",
-                    bank_account = new BankAccount
+                    Account_type = "bank_account",
+                    Bank_account = new BankAccount
                     {
-                        name = model.FullName ?? string.Empty,
-                        ifsc = model.IFSCCode,
-                        account_number = model.AccountNumber.ToString()
+                        Name = model.FullName ?? string.Empty,
+                        Ifsc = model.IFSCCode,
+                        Account_number= model.AccountNumber.ToString()
                     },
-                    contact = new Contact
+                    Contact = new Contact
                     {
-                        name = "Ramlakhan",
-                        email = "Ramlakhan@example.com",
+                        Name = "Ramlakhan",
+                        Email = "Ramlakhan@example.com",
                         contact = "9876543210",
-                        type = "vendor",
-                        reference_id = "Acme Contact ID 12345",
-                        notes = new Notes
+                        Type = "vendor",
+                        Reference_id = "Acme Contact ID 12345",
+                        Notes = new Notes
                         {
-                            notes_key_1 = "Tea, Earl Grey, Hot",
-                            notes_key_2 = "Tea, Earl Grey… decaf."
+                            Notes_key_1 = "Tea, Earl Grey, Hot",
+                            Notes_key_2 = "Tea, Earl Grey… decaf."
                         }
 
                     }
                 },
-                account_number = PayoutAccountNumber,
-                amount = (int)model.Amount,
-                currency = "INR",
-                purpose = "refund",
-                queue_if_low_balance = true,
-                reference_id = referenceId,
-                narration = "Acme Corp Fund Transfer",
-                notes = new Notes
+                Account_number = "2323230098018072",
+                Amount = (int)model.Amount,
+                Currency = "INR",
+                Purpose = "refund",
+                Queue_if_low_balance = true,
+                Reference_id = referenceId,
+                Narration = "Acme Corp Fund Transfer",
+                Notes = new Notes
                 {
-                    notes_key_1 = "Tea, Earl Grey, Hot",
-                    notes_key_2 = "Tea, Earl Grey… decaf."
+                    Notes_key_1 = "Tea, Earl Grey, Hot",
+                    Notes_key_2 = "Tea, Earl Grey… decaf."
                 }
             };
 
             var apiResponse = await _apiService.PayoutsMoneyTransferResponseAsync(requestPayouts);
 
-            if (apiResponse?.error != null && !string.IsNullOrEmpty(apiResponse?.error?.description))
+            if (apiResponse?.Error != null && !string.IsNullOrEmpty(apiResponse?.Error?.Description))
             {
-                response.Message = apiResponse?.error?.description ?? string.Empty;
+                response.Message = apiResponse?.Error?.Description ?? string.Empty;
                 response.ResultFlag = 0;
                 return response;
             }
 
             return new ResponseModel() { ResultFlag = 1, Message = "Money successfully! Transferred" };
         }
-        #endregion PayoutsMoneyTransfer End
+        #endregion PayoutsBankAccount End
+
+        #region UPIPayouts
+        public async Task<ResponseModel> UpiPayoutAsync(ApplicationUser user, UPIPayoutModel model)
+        {
+            ResponseModel response = new();
+            SurchargeModel surcharge = new();
+            string referenceId = _commonService.RandamNumber(10);
+
+            if (surcharge.IsFlat && surcharge.SurchargeAmount > 0)
+                model.Amount = model.Amount + (model.Amount * surcharge.SurchargeAmount / 100);
+            else if (!surcharge.IsFlat && surcharge.SurchargeAmount > 0)
+                model.Amount = model.Amount + surcharge.SurchargeAmount;
+
+            var updateWalletResult = await UpdateWalletAsync(user.Id, user.MemberId, model.Amount);
+
+            if (updateWalletResult != null && updateWalletResult.ResultFlag == 0) return updateWalletResult;
+
+            var upiPayoutmodel = new UpiPayoutRequestModel
+            {
+                Account_number = PayoutAccountNumber,
+                Amount = (int)model.Amount,
+                Currency = "INR",
+                Mode = "UPI",
+                Purpose = "refund",
+                Fund_account = new FundAccountUPI
+                {
+                    Account_type = "vpa",
+                    Vpa = new Vpa
+                    {
+                        Address = model.UPIId
+                    },
+                    Contact = new Contact
+                    {
+                        Name = "Gaurav Kumar",
+                        Email = "gaurav.kumar@example.com",
+                        contact = "9876543210",
+                        Type = "self",
+                        Reference_id = "Acme Contact ID 12345",
+                        Notes = new Notes
+                        {
+                            Notes_key_1 = "Tea, Earl Grey, Hot",
+                            Notes_key_2 = "Tea, Earl Grey… decaf."
+                        }
+                    }
+                },
+                Queue_if_low_balance = true,
+                Reference_id = referenceId,
+                Narration = "Acme Corp Fund Transfer",
+                Notes = new Notes
+                {
+                    Notes_key_1 = "Tea, Earl Grey, Hot",
+                    Notes_key_2 = "Tea, Earl Grey… decaf."
+                }
+            };
+
+            var apiResponse = await _apiService.UPIPayoutsAsync(upiPayoutmodel);
+
+            if (apiResponse?.Error != null && !string.IsNullOrEmpty(apiResponse?.Error?.Description))
+            {
+                response.Message = apiResponse?.Error?.Description ?? string.Empty;
+                response.ResultFlag = 0;
+                return response;
+            }
+
+            return new ResponseModel() { ResultFlag = 1, Message = "Money successfully! Transferred" };
+        }
+        #endregion UPIPayouts End
 
         #region UpdateWallet
         public async Task<ResponseModel> UpdateWalletAsync(string userId, string memberId, decimal amount)
