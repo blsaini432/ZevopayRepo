@@ -57,5 +57,25 @@ namespace Zevopay.Services
             }
 
         }
+
+        public async Task<IEnumerable<MemberWalletTransactions>> GetPayoutTransactionsAsync(string userId)
+        {
+            try
+            {
+                var data = await _context.QueryAsync<MemberWalletTransactions>("SP_SubAdmin",
+                new
+                {
+                    Action = 3,
+                    Id = userId
+                }, type: CommandType.StoredProcedure);
+                return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
     }
 }

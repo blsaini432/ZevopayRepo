@@ -2,7 +2,7 @@
     $('#varify_code').on('click', function () {
 
         var code = $('#AuthenticatorCode').val();
-        var IsUserTwoFactorEnabled = false;
+        var isUserTwoFactorEnabled = false;
         var isTwoFactorEnabled = $('#IsUserTwoFactorEnabled').val();
         if (isTwoFactorEnabled == 1) {
             isUserTwoFactorEnabled = true;
