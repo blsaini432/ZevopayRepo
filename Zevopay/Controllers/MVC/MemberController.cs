@@ -27,8 +27,8 @@ namespace Zevopay.Controllers.MVC
         public async Task<IActionResult> UPIPayoutsSaveAsync(UPIPayoutModel model)
         {
             ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User) ?? new();
-
-            return new JsonResult(new ResponseModel() { ResultFlag = 1, Message = "Payments successfully!" });
+            var response = await _payoutsService.UpiPayoutAsync(user,model);
+            return new JsonResult(response);
         }
 
         #endregion UPIPayouts End
