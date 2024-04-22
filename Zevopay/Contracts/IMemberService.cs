@@ -7,7 +7,7 @@ namespace Zevopay.Contracts
     {
         Task<WalletModel> GetWalletBalanceRecordAsync(string userId);
         Task<IEnumerable<MemberWalletTransactions>> GetWalletTransactionsAsync(string userId);
-        Task<IEnumerable<MemberWalletTransactions>> GetPayoutTransactionsAsync(string userId);
+        Task<IEnumerable<PayoutsMoneyTransferRequestModel>> GetPayoutTransactionsAsync(string memberId);
         Task<Surcharge> GetSurchargeBasedPackageAsync();
         Task<ResponseModel> CheckWalletBalanceAndUpdateAsync(decimal amount,string userId);
     }

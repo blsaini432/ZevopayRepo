@@ -147,7 +147,7 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                return PartialView(await _memberService.GetWalletTransactionsAsync(_userManager.GetUserAsync(HttpContext.User).Result.Id));
+                return PartialView(await _memberService.GetWalletTransactionsAsync(_userManager.GetUserAsync(HttpContext.User).Result.MemberId));
             }
             catch (Exception ex)
             {

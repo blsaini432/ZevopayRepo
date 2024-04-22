@@ -33,7 +33,8 @@ namespace Zevopay.Services
             return await _context.QueryFirstOrDefaultAsync<WalletModel>("SP_SubAdmin",
             new
             {
-                Action = 2,
+                Action = 4,
+                id= userId
             }, type: CommandType.StoredProcedure);
 
         }
@@ -58,21 +59,20 @@ namespace Zevopay.Services
 
         }
 
-        public async Task<IEnumerable<MemberWalletTransactions>> GetPayoutTransactionsAsync(string userId)
+        public async Task<IEnumerable<PayoutsMoneyTransferRequestModel>> GetPayoutTransactionsAsync(string memberId)
         {
             try
             {
-                var data = await _context.QueryAsync<MemberWalletTransactions>("SP_SubAdmin",
+                var data = await _context.QueryAsync<PayoutsMoneyTransferRequestModel>("SP_PayoutTransaction",
                 new
                 {
-                    Action = 3,
-                    Id = userId
+                    Action = 2,
+                    MemeberId = memberId
                 }, type: CommandType.StoredProcedure);
                 return data;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
                 throw;
             }
 
