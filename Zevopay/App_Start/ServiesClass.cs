@@ -19,13 +19,13 @@ namespace Zevopay.App_Start
              .AddEntityFrameworkStores<DataContext>()
              .AddDefaultTokenProviders();
 
-            //services.AddHttpContextAccessor();
+            services.AddHttpContextAccessor();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IApiService, ApiService>();
-            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ISubAdminService, SubAdminService>();
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IMemberService, MemberService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
             services.AddScoped<IPayoutsService, PayoutsService>();
 

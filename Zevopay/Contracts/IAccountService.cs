@@ -7,7 +7,8 @@ namespace Zevopay.Contracts
         Task<ResponseModel> Login(LoginModel model);
         void Logout();
         Task SetUserTwoFactorTrue (string userId);
-
+        Task<ResponseModel> CheckCredentialsAsync(LoginModel model);
+        Task<ResponseModel> SaveMemberAsync(SubAdminModel model);
         //Task<ResponseModel> ResetPassword(ResetPasswordModel model);
 
     }

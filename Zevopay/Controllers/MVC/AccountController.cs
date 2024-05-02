@@ -9,6 +9,7 @@ using System.Text;
 using Zevopay.Contracts;
 using Zevopay.Data.Entity;
 using Zevopay.Models;
+using static QRCoder.PayloadGenerator;
 
 
 namespace Zevopay.Controllers.MVC
@@ -52,80 +53,61 @@ namespace Zevopay.Controllers.MVC
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            try
-            {
-
-                var response = await _accountService.Login(model);
-                if (response.ResultFlag == 1)
-                {
-                    var isTwoFactorEnabled = _userManager.GetUserAsync(HttpContext.User).Result.isTwoFactorEnabled;
-                    response.ResultFlag = !isTwoFactorEnabled ? 2 : 3;
-                    response.Data = new { Email = model.Email };
-                }
-
-                return Json(response);
-
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult TwoFactorAuth(string Email,bool isTwoFactorAuthenticate)
-        {
-            try
-            {
-
-                LoginModel model = new();
-                string googleAuthKey = _configuration["GoogleAuthKey"];
-                string UserUniqueKey = $"{Email}{googleAuthKey}";
-
-                //Two Factor Authentication Setup
-                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-                var setupInfo = TwoFacAuth.GenerateSetupCode("Zevopay", Email, ConvertSecretToBytes(UserUniqueKey, false), 300);
-                HttpContext.Session.SetString("SecretKey", UserUniqueKey);
-
-                model.BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
-                model.SetupCode = setupInfo.ManualEntryKey;
-                model.IsUserTwoFactorEnabled = isTwoFactorAuthenticate;
-                return View(model);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> TwoFactorAuth(LoginModel model)
-        {
             ResponseModel response = new();
             try
             {
-                string UserUniqueKey = HttpContext.Session.GetString("SecretKey").ToString();
-
-                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-                bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, model.AuthenticatorCode, false);
+                bool isValid = _twoFactorAuthService.VerifyCode(model.AuthenticatorCode);
                 if (isValid)
                 {
-                    if(!model.IsUserTwoFactorEnabled)
+                    response = await _accountService.Login(model);
+                    if (response.ResultFlag == 1)
                     {
-                        var user =await GetCurrentUserAsync();
-                        await _accountService.SetUserTwoFactorTrue(user.Id);
+                        var user = _userManager.GetUserAsync(HttpContext.User).Result;
+                        if (!user.isTwoFactorEnabled)
+                            await _accountService.SetUserTwoFactorTrue(user.Id);
                     }
-                    HttpContext.Session.SetString("IsAuthenticated", "true");
-                    response.ResultFlag = 1;
-                    response.Message = "Successfully! login";
                 }
                 else
                 {
                     response.ResultFlag = 0;
                     response.Message = "Google Two Factor PIN is expired or wrong!";
                 }
+
+            }
+            catch (Exception ex)
+            {
+                response.ResultFlag = 0;
+                response.Message = ex.Message;
+            }
+            return Json(response);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckCredentials(LoginModel model)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var result = await _accountService.CheckCredentialsAsync(model);
+                if (result.ResultFlag == 1)
+                {
+                    ApplicationUser user = await _userManager.FindByEmailAsync(model.Email.Trim());
+                    response.ResultFlag = 1;
+                    if (!user.isTwoFactorEnabled)
+                    {
+                        response.ResultFlag = 2;
+                        response.Data = _twoFactorAuthService.GenerateQrCode(user.Email);
+                    }
+                    else
+                    {
+                        HttpContext.Session.SetString("SecretKey", $"{user.Email}{_configuration["GoogleAuthKey"]}");
+                    }
+                    return Json(response);
+
+                }
+                response.ResultFlag = 0;
+                response.Message = result.Message;
             }
             catch (Exception ex)
             {
@@ -133,15 +115,15 @@ namespace Zevopay.Controllers.MVC
                 response.ResultFlag = 0;
             }
             return Json(response);
+
+
         }
+
         public async Task<IActionResult> Logout()
         {
             _accountService.Logout();
             return RedirectToAction("Login", "Account");
         }
-
-        private static byte[] ConvertSecretToBytes(string secret, bool secretIsBase32) =>
-           secretIsBase32 ? Base32Encoding.ToBytes(secret) : Encoding.UTF8.GetBytes(secret);
 
         public IActionResult AccessDenied()
         {
@@ -256,8 +238,6 @@ namespace Zevopay.Controllers.MVC
                         model.PhoneNumber = user.PhoneNumber ?? string.Empty;
                         model.ApplicationRoleId = _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == user.Role).Result.Id;
                         model.Address = user.Address ?? string.Empty;
-                        model.UserName = user.UserName ?? string.Empty;
-
                     }
                 }
                 else
@@ -282,84 +262,12 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                if (model.Id == null && model != null)
-                {
-                    ApplicationRole applicationRole = await _roleManager.FindByIdAsync(model.ApplicationRoleId);
-
-                    ApplicationUser user = new ApplicationUser
-                    {
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        Email = model.Email,
-                        PhoneNumber = model.PhoneNumber,
-                        UserName = model.UserName,
-                        Name = model.FirstName + " " + model.LastName,
-                        Address = model.Address,
-                        Role = applicationRole?.Name,
-                        CreateDate = model.CreateDate,
-                        MemberId = $"RT{RandamNumber(6)}"
-                    };
-                    var result = await _userManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
-                    {
-                        if (applicationRole != null)
-                        {
-                            var roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
-                            if (roleResult.Succeeded)
-                            {
-                                var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
-                                if (UpdateUser != null)
-                                {
-
-                                    FundManageModel FundManageMode = new FundManageModel()
-                                    {
-                                        MemberId = UpdateUser.MemberId,
-                                        Factor = "Cr",
-                                        Amount = 0,
-                                        Description = "Registration",
-                                    };
-                                    _ = await _adminService.FundManageAsync(FundManageMode);
-
-                                    UpdateUser.Role = applicationRole.Name;
-                                }
-                                var results = await _userManager.UpdateAsync(UpdateUser);
-
-                                _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
-
-                                return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
-                            }
-                        }
-                    }
-
-                    return new JsonResult(new ResponseModel { ResultFlag = 0, Message = "Error! while Adding Sub Admin" });
-
-                }
-                else
-                {
-                    ApplicationUser user = await _userManager.FindByIdAsync(model.Id);
-                    var result = new IdentityResult();
-                    if (user != null)
-                    {
-                        user.FirstName = model.FirstName;
-                        user.LastName = model.LastName;
-                        user.Email = model.Email;
-                        user.Address = model.Address;
-                        user.UserName = model.UserName;
-                        user.PhoneNumber = model.PhoneNumber;
-                        user.Name = model.FirstName + " " + model.LastName;
-                        result = await _userManager.UpdateAsync(user);
-                        if (result.Succeeded)
-                        {
-                            return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is Updated successfully!" });
-                        }
-
-                    }
-                    return new JsonResult(new ResponseModel { ResultFlag = 0, Data = result.Errors });
-                }
+                var response = await _accountService.SaveMemberAsync(model);
+                return new JsonResult(response);
             }
             catch (Exception ex)
             {
-                return new JsonResult(new ResponseModel { ResultFlag = 0, Message = ex.Message });
+                return new JsonResult(new ResponseModel { ResultFlag = 2, Data = ex.Message });
             }
         }
 
