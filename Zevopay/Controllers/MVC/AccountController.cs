@@ -103,19 +103,17 @@ namespace Zevopay.Controllers.MVC
                     {
                         HttpContext.Session.SetString("SecretKey", $"{user.Email}{_configuration["GoogleAuthKey"]}");
                     }
-                    return Json(response);
 
                 }
-                response.ResultFlag = 0;
-                response.Message = result.Message;
+
             }
             catch (Exception ex)
             {
                 response.Message = ex.Message;
                 response.ResultFlag = 0;
             }
-            return Json(response);
 
+            return Json(response);
 
         }
 
@@ -238,6 +236,8 @@ namespace Zevopay.Controllers.MVC
                         model.PhoneNumber = user.PhoneNumber ?? string.Empty;
                         model.ApplicationRoleId = _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == user.Role).Result.Id;
                         model.Address = user.Address ?? string.Empty;
+                        model.UserName = user.UserName ?? string.Empty;
+
                     }
                 }
                 else
@@ -262,12 +262,84 @@ namespace Zevopay.Controllers.MVC
         {
             try
             {
-                var response = await _accountService.SaveMemberAsync(model);
-                return new JsonResult(response);
+                if (model.Id == null && model != null)
+                {
+                    ApplicationRole applicationRole = await _roleManager.FindByIdAsync(model.ApplicationRoleId);
+
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.Email,
+                        PhoneNumber = model.PhoneNumber,
+                        UserName = model.UserName,
+                        Name = model.FirstName + " " + model.LastName,
+                        Address = model.Address,
+                        Role = applicationRole?.Name,
+                        CreateDate = model.CreateDate,
+                        MemberId = $"RT{RandamNumber(6)}"
+                    };
+                    var result = await _userManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        if (applicationRole != null)
+                        {
+                            var roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
+                            if (roleResult.Succeeded)
+                            {
+                                var UpdateUser = await _userManager.FindByEmailAsync(model.Email);
+                                if (UpdateUser != null)
+                                {
+
+                                    FundManageModel FundManageMode = new FundManageModel()
+                                    {
+                                        MemberId = UpdateUser.MemberId,
+                                        Factor = "Cr",
+                                        Amount = 0,
+                                        Description = "Registration",
+                                    };
+                                    _ = await _adminService.FundManageAsync(FundManageMode);
+
+                                    UpdateUser.Role = applicationRole.Name;
+                                }
+                                var results = await _userManager.UpdateAsync(UpdateUser);
+
+                                _ = await _subAdminService.UpdateSubAdminStatus(false, UpdateUser.Id);
+
+                                return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is added successfully" });
+                            }
+                        }
+                    }
+
+                    return new JsonResult(new ResponseModel { ResultFlag = 0, Message = "Error! while Adding Sub Admin" });
+
+                }
+                else
+                {
+                    ApplicationUser user = await _userManager.FindByIdAsync(model.Id);
+                    var result = new IdentityResult();
+                    if (user != null)
+                    {
+                        user.FirstName = model.FirstName;
+                        user.LastName = model.LastName;
+                        user.Email = model.Email;
+                        user.Address = model.Address;
+                        user.UserName = model.UserName;
+                        user.PhoneNumber = model.PhoneNumber;
+                        user.Name = model.FirstName + " " + model.LastName;
+                        result = await _userManager.UpdateAsync(user);
+                        if (result.Succeeded)
+                        {
+                            return new JsonResult(new ResponseModel { ResultFlag = 1, Message = "Sub Admin is Updated successfully!" });
+                        }
+
+                    }
+                    return new JsonResult(new ResponseModel { ResultFlag = 0, Data = result.Errors });
+                }
             }
             catch (Exception ex)
             {
-                return new JsonResult(new ResponseModel { ResultFlag = 2, Data = ex.Message });
+                return new JsonResult(new ResponseModel { ResultFlag = 0, Message = ex.Message });
             }
         }
 
