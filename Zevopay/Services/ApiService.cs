@@ -13,7 +13,7 @@ namespace Zevopay.Services
         public async Task<PayoutsMoneyTransferResponseModel> PayoutsMoneyTransferResponseAsync(PayoutsMoneyTransferRequestModel requestModel)
         {
             var client = new RestClient(Constants.apiBaseUrl);
-            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(Constants.apiKey + ":" + Constants.apiBaseUrl)}");
+            client.AddDefaultHeader("Authorization", $"Basic {Base64Encode(Constants.apiKey + ":" + Constants.secretKey)}");
             var request = new RestRequest("payouts", Method.Post);
             request.AddJsonBody(requestModel);
 

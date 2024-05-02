@@ -1,8 +1,10 @@
-﻿namespace Zevopay.Contracts
+﻿using Zevopay.Models;
+
+namespace Zevopay.Contracts
 {
     public interface ITwoFactorAuthService
     {
-        string GenerateQrCode(string userName, string secretKey);
-        bool VerifyCode(string secretKey, string code);
+        LoginModel GenerateQrCode(string email);
+        bool VerifyCode(string code);
     }
 }

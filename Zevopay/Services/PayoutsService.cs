@@ -41,7 +41,8 @@ namespace Zevopay.Services
             model.Amount += surchargeAmount;
             var updateWalletResult = await UpdateWalletAsync(user.Id, user.MemberId, model.Amount);
 
-            if (updateWalletResult != null && updateWalletResult.ResultFlag == 0) return updateWalletResult;
+            if (updateWalletResult != null && updateWalletResult.ResultFlag == 0) 
+                return updateWalletResult;
 
             var requestPayouts = new PayoutsMoneyTransferRequestModel
             {
@@ -64,7 +65,7 @@ namespace Zevopay.Services
                         Reference_id = "Acme Contact ID 12345"
                     }
                 },
-                Account_number = "2323230098018072",
+                Account_number = Constants.PayoutAccountNumber,
                 Amount = (int)model.Amount,
                 Currency = "INR",
                 Purpose = "refund",
@@ -87,14 +88,14 @@ namespace Zevopay.Services
                new
                {
                    Action = 1,
-                   Account_number = apiResponse.Fund_account.Bank_account.Account_number,
+                   Account_number = apiResponse.Fund_account.Bank_account?.Account_number,
                    Amount = model.Amount - surchargeAmount,
                    Fund_account_id = apiResponse.Fund_account_id,
-                   Ifsc = apiResponse.Fund_account.Bank_account.Ifsc,
+                   Ifsc = apiResponse.Fund_account.Bank_account?.Ifsc,
                    MemeberId = user.MemberId,
                    Mode = apiResponse.Mode,
                    Narration = apiResponse.Narration,
-                   Name = apiResponse.Fund_account.Bank_account.Name,
+                   Name = apiResponse.Fund_account.Bank_account?.Name,
                    PayoutId = apiResponse.Id,
                    Purpose = apiResponse.Purpose,
                    Status = "Pending",
@@ -168,7 +169,7 @@ namespace Zevopay.Services
                new
                {
                    Action = 1,
-                   Account_number = apiResponse.Fund_account.Vpa.Address,
+                   Account_number = apiResponse.Fund_account?.Vpa.Address,
                    Amount = model.Amount - surchargeAmount,
                    Fund_account_id = apiResponse.Fund_account_id,
                    MemeberId = user.MemberId,
@@ -212,7 +213,7 @@ namespace Zevopay.Services
                 Contact = new Contact
                 {
                     Name = "Ramlakhan",
-                    contact = model.PhoneNumber.ToString(),
+                    contact = model.PhoneNumber,
                     Email = model.Email,
                     Type = "customer"
                 },
@@ -247,10 +248,11 @@ namespace Zevopay.Services
                    Status = "Pending",
                    Surcharge = surchargeAmount,
                    Reference_id = referenceId,
-                   TotalAmount = model.Amount
+                   TotalAmount = model.Amount,
+                   ContactNumber=model.PhoneNumber,
+                   Email=model.Email
                }
 , commandType: CommandType.StoredProcedure);
-
 
 
             return new ResponseModel() { ResultFlag = 1, Message = "Payouts links successfully! sent" };

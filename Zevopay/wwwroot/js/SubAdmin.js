@@ -9,14 +9,11 @@
         var address = $('#address').val();
         var roleId = $('#RoleId').val();
         var phone = $('#PhoneNumber').val();
-        var userName = $('#UserName').val();
 
         if (fName == '') {
             toastr.error(`FirstName is required!`);
         } else if (lName == '') {
             toastr.error(`LastName is required!`);
-        } else if (userName == '') {
-            toastr.error(`userName is required!`);
         } else if (password == '') {
             if (id == '') {
                 toastr.error(`Password is required!`);
@@ -35,7 +32,6 @@
         else {
             var formData = {
                 FirstName: fName,
-                UserName: userName,
                 LastName: lName,
                 ApplicationRoleId: roleId,
                 Address: address,
@@ -50,14 +46,16 @@
                 type: "post",
                 data: formData,
                 success: function (d) {
-                    if (d.message != '') {
+                    if (d.message != '' || d.data != null || d.data != undefined) {
 
                         if (d.resultFlag == 1) {
                             toastr.success(d.message);
                             window.location.href = "/Account/SubAdminList";
-                        } else {
+                        } else if (d.resultFlag == 2) {
 
                             toastr.error(d.message);
+                        } else {
+                            toastr.error(d.data[0].description);
                         }
                     }
                 },
